@@ -6,3 +6,28 @@ app:
     - "mongo:mongo"
 mongo:
   image: mongo
+  environment:
+    - "SERVICE_NAME=mongo"
+
+
+discovery:
+  image: progrium/consul
+  expose:
+    - "8500"
+    - "8400"
+    - "53/udp"
+  hostname: "node1"
+  command: "-server -bootstrap"
+  environment:
+    - "SERVICE_NAME=discovery-service"
+    - "SERVICE_TAGS=interactive-lecture,private"
+
+
+
+registrator:
+  image: gliderlabs/registrator
+  volumes:
+    - "/var/run/docker.sock:/tmp/docker.sock"
+  links:
+    - "discovery:discovery"
+  command: "-internal consul://discovery:8500"
