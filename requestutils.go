@@ -10,26 +10,36 @@ type Range struct {
 	To   int64
 }
 
-func ParseRangeRequest(request string) ([]Range, error) {
+func (r Range) ContentLength() int64 {
+	return (r.To - r.From) + 1
+}
+
+func NewRange(from, to, fileSize int64) Range {
+	r := Range{from, to}
+	if to < 0 {
+		r.To = fileSize - 1
+	}
+	if from < 0 {
+		r.From = 0
+	}
+	return r
+}
+
+func ParseRangeRequest(request string, fileSize int64) ([]Range, error) {
 	a := s.Replace(request, " ", "", -1)
 	a = s.Replace(a, "bytes=", "", -1)
 	ranges := []Range{}
 	for _, part := range s.Split(a, ",") {
 		parts := s.Split(part, "-")
-		resultRange := Range{}
 		from, err := convertToInt(parts[0])
 		if err != nil {
 			return nil, err
 		}
-
-		resultRange.From = from
 		to, err := convertToInt(parts[1])
-
 		if err != nil {
 			return nil, err
 		}
-		resultRange.To = to
-		ranges = append(ranges, resultRange)
+		ranges = append(ranges, NewRange(from, to, fileSize))
 	}
 	return ranges, nil
 }

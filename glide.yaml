@@ -1,7 +1,0 @@
-package: main
-import:
-  - package: github.com/gorilla/mux
-  - package: gopkg.in/mgo.v2
-  - package: github.com/auth0/go-jwt-middleware
-  - package: github.com/dgrijalva/jwt-go
-  - package: github.com/gorilla/context
