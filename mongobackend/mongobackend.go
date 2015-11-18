@@ -4,7 +4,6 @@ import (
 	"io"
 
 	"github.com/InteractiveLecture/media-service/backend"
-	"github.com/satori/go.uuid"
 	"gopkg.in/mgo.v2"
 )
 
