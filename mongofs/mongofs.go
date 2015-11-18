@@ -4,8 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/satori/go.uuid"
@@ -30,16 +32,29 @@ func New(address, dbname, fsname string) *Mongofs {
 
 type MongoFile struct {
 	mgo.GridFile
+	mgo.Session
 }
 
-func (m Mongofs) Open(name string) (*MongoFile, error) {
+func (m MongoFile) Close() error {
+	defer m.Session.Close()
+	return m.GridFile.Close()
+}
+
+func (m Mongofs) Open(name string) (http.File, error) {
+	if strings.HasPrefix(name, "/") {
+		name = strings.TrimLeft(name, "/")
+	}
+	log.Println(name)
 	session, err := mgo.Dial(m.Address)
 	if err != nil {
 		return nil, err
 	}
-	defer session.Close()
 	file, err := session.DB(m.DbName).GridFS(m.GridFSName).Open(name)
-	return &MongoFile{*file}, nil
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return &MongoFile{*file, *session}, nil
 }
 
 func (m MongoFile) Mode() os.FileMode {
@@ -66,7 +81,7 @@ func (m MongoFile) Readdir(count int) ([]os.FileInfo, error) {
 	return nil, errors.New("dirs are not supported")
 }
 
-func (m Mongofs) Save(fileExtension string, reader io.ReadCloser) (string, error) {
+func (m Mongofs) Save(fileExtension string, meta map[string]interface{}, reader io.Reader) (string, error) {
 	session, connectionError := mgo.Dial(m.Address)
 	if connectionError != nil {
 		return "", connectionError
@@ -75,6 +90,7 @@ func (m Mongofs) Save(fileExtension string, reader io.ReadCloser) (string, error
 	id := uuid.NewV4().String()
 	fileName := fmt.Sprintf("%s.%s", id, fileExtension)
 	file, err := session.DB(m.DbName).GridFS(m.GridFSName).Create(fileName)
+	file.SetMeta(meta)
 	if err != nil {
 		return "", err
 	}
