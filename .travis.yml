@@ -6,7 +6,9 @@ go:
 
 services:
   - docker
-  - mongodb
+
+before_install:
+  - docker run -d --name mongo -p 27017:27017 mongo
 
 install:
   - go get github.com/InteractiveLecture/middlewares/jwtware
@@ -15,6 +17,7 @@ install:
   - go get github.com/satori/go.uuid
   - go get gopkg.in/mgo.v2
   - go get  github.com/stretchr/testify/assert
+
 before_script:
   - sleep 15
 
