@@ -1,6 +1,9 @@
 #!/bin/bash
 set -ev
-cd mongofs
+cd backend
+go test
+go install
+cd ../mongofs
 go test
 go install
 cd ..
