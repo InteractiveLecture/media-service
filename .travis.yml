@@ -6,6 +6,8 @@ go:
 
 services:
   - docker
+  - mongodb
+
 install:
   - go get github.com/InteractiveLecture/middlewares/jwtware
   - go get github.com/InteractiveLecture/middlewares/groupware
