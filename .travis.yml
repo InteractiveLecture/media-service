@@ -14,7 +14,9 @@ install:
   - go get github.com/gorilla/mux
   - go get github.com/satori/go.uuid
   - go get gopkg.in/mgo.v2
-  - go get  github.com/stretchr/testify/assert
+  - go get  github.com/stretchr/testify/assere
+before_script:
+  - sleep 15
 
 script:
   - ./build.sh
