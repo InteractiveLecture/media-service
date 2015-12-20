@@ -54,7 +54,6 @@ func buildDownloadHandler(host string) http.Handler {
 }
 
 func main() {
-
 	host := flag.String("mongohost", "mongo", "hostname of mongodb")
 	r := mux.NewRouter()
 	// middleware-chain handlers. Router -> jwt-verification -> group verification-> application

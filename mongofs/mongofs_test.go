@@ -7,6 +7,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 
@@ -14,7 +15,8 @@ import (
 )
 
 func TestMongofs(t *testing.T) {
-	fs := New("localhost", "media", "fs")
+	host := os.Getenv("MONGOHOST")
+	fs := New(host, "media", "fs")
 	fileHandler := http.FileServer(fs)
 	server := httptest.NewServer(fileHandler)
 	defer server.Close()
