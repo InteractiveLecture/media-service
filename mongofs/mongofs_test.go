@@ -3,6 +3,7 @@ package mongofs
 import (
 	"bytes"
 	"fmt"
+	"log"
 	"mime"
 	"mime/multipart"
 	"net/http"
@@ -16,6 +17,7 @@ import (
 
 func TestMongofs(t *testing.T) {
 	host := os.Getenv("MONGOHOST")
+	log.Println("host is ", host)
 	fs := New(host, "media", "fs")
 	fileHandler := http.FileServer(fs)
 	server := httptest.NewServer(fileHandler)

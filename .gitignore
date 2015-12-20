@@ -1,3 +1,4 @@
 vendor/*
 out/*
 media-service
+**/*.swp
