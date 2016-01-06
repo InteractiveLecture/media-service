@@ -59,7 +59,7 @@ func main() {
 	// middleware-chain handlers. Router -> jwt-verification -> group verification-> application
 	r.Methods("POST").Path("/").Handler(buildUploadHandler(*host))
 	r.Methods("GET").Path("/{id}").Handler(buildDownloadHandler(*host))
-	log.Println("listening on 8000")
+	log.Println("listening on 8080")
 	// Bind to a port and pass our router in
-	http.ListenAndServe(":8000", r)
+	http.ListenAndServe(":8080", r)
 }
